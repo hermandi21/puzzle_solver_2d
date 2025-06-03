@@ -19,29 +19,16 @@ data/pzl_1/
 
 
 
+## Erste Idee:
+- Wir gehen davon aus dass wir das fertige Puzzlemuster schon kennen.
 
-from pathlib import Path
-import shutil
+1. Referenzbild vom gesamten Puzzle erstellen
+    - Das Referenzbild so zuschneiden dass es das gesamte Bild ausfuellt
+2. Bild von den einzelnen Puzzlestuecken erstellen
+    - Mithilfe von Regionenerkennung mit Bounding Boxen die Matrix erstellen
+    - Größe des einzelnen Puzzlestuecks an das Referenzbild anpassen
+    - Das Puzzlestueck als Filter nutzen. Mit dieser Filtermaske über das Referenzbild iterieren und 
+    pro Pixel den Korrelationskoeffizienten berechnen.
+    Dies wiederrum fuer alle moeglichen Roatationsmoeglichkeiten durchfueheren.
+    
 
-# Setup für ein Jupyter-kompatibles Skript
-source_dir = Path("../data/image_data")
-target_dir = Path("../data/sorted_puzzles")
-target_dir.mkdir(parents=True, exist_ok=True)
-
-# Alle JPG-Dateien im Quellordner alphabetisch sortieren (basierend auf Zeitstempel im Namen)
-images = sorted([f for f in source_dir.iterdir() if f.suffix.lower() == ".jpg"])
-
-# Anzahl Bilder pro Puzzle
-images_per_puzzle = 10
-
-# Umbenennung und Kopieren
-renamed_files = []
-for i, img_path in enumerate(images):
-    puzzle_num = (i // images_per_puzzle) + 1
-    img_index = (i % images_per_puzzle) + 1
-    new_name = f"pzl_{puzzle_num}_{img_index:03d}.jpg"
-    new_path = target_dir / new_name
-    shutil.copy(img_path, new_path)
-    renamed_files.append((img_path.name, new_name))
-
-renamed_files[:10]  # Zeige die ersten 10 Umbenennungen als Vorschau
